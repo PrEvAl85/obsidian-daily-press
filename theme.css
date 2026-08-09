@@ -1,0 +1,1148 @@
+/* =====================================================================
+   DAILY PRESS — Thermal Receipt & Newsprint Aesthetic
+   Газетно-чековая тема Obsidian: термочек, газетная печать,
+   1-битный дизеринг и высокая контрастность.
+
+   Light  — неотбеленная бумага #F4F3EF, сухой чёрный пигмент #121212.
+   Dark   — инвертированный термочек: #0D0D0D фон, #E5E5E5 термоточки.
+
+   Только чистый CSS: пунктиры, сплошные линии и «перфорация»
+   реализованы средствами dashed / dotted / repeating-linear-gradient.
+   ===================================================================== */
+
+/* =====================================================================
+   1. Собственные токены темы
+   ===================================================================== */
+:root {
+  /* --- Чековая бумага и чернила --- */
+  --press-paper: #F4F3EF;          /* основной лист / термобумага */
+  --press-paper-secondary: #E8E6DF;/* вторые слои, поля, купоны */
+  --press-paper-shade: #DFDCD3;    /* тёмный оттенок бумаги */
+  --press-ink: #121212;            /* сухие чернила / термокраска */
+  --press-ink-muted: #555555;      /* выцветшие термочернила */
+  --press-ink-faint: #8A877E;      /* едва заметный оттиск */
+  --press-accent: #000000;         /* акцент — чистая типографская краска */
+
+  /* --- Чековые линии --- */
+  --press-border: 1px solid var(--press-ink);
+  --press-border-strong: 2px solid var(--press-ink);
+  --press-perforation: 2px dashed var(--press-ink);   /* линия отреза */
+
+  /* --- Типографика --- */
+  /* Чековый моноширинный шрифт: интерфейс, панели и основной текст */
+  --font-interface: 'Courier Prime', 'Courier New', 'Consolas', 'SF Mono', monospace;
+  --font-ui: var(--font-interface);
+  --font-monospace: 'Courier Prime', 'Courier New', 'Consolas', 'SF Mono', monospace;
+  --font-text: 'Courier Prime', 'Courier New', 'Consolas', 'SF Mono', monospace;
+  /* Газетная антиква: только заголовки H1–H6 */
+  --font-heading: 'Georgia', 'Times New Roman', serif;
+
+  /* --- Прямые углы: никаких скруглений --- */
+  --radius-s: 0px;
+  --radius-m: 0px;
+  --radius-l: 0px;
+  --radius-xl: 0px;
+
+  /* --- Размеры интерфейса --- */
+  --font-text-size: 16px;
+  --line-height-normal: 1.6;
+  --line-height-tight: 1.35;
+}
+
+/* =====================================================================
+   2. LIGHT MODE — газетный лист
+   ===================================================================== */
+body.theme-light {
+  --background-primary: var(--press-paper);
+  --background-primary-alt: var(--press-paper-shade);
+  --background-secondary: var(--press-paper-secondary);
+  --background-secondary-alt: var(--press-paper-shade);
+
+  --background-modifier-border: var(--press-ink);
+  --background-modifier-border-hover: var(--press-ink);
+  --background-modifier-border-focus: var(--press-ink);
+  --background-modifier-box-shadow: rgba(18, 18, 18, 0.25);
+  --background-modifier-error: var(--press-ink);
+  --background-modifier-error-hover: #000000;
+  --background-modifier-success: var(--press-ink);
+  --background-modifier-message: var(--press-paper-secondary);
+  --background-modifier-hover: rgba(18, 18, 18, 0.12);
+  --background-modifier-active-hover: rgba(18, 18, 18, 0.22);
+
+  --text-normal: var(--press-ink);
+  --text-muted: var(--press-ink-muted);
+  --text-faint: var(--press-ink-faint);
+  --text-error: var(--press-ink);
+  --text-success: var(--press-ink);
+  --text-accent: var(--press-ink);
+  --text-accent-hover: #000000;
+  --text-on-accent: var(--press-paper);
+  --text-selection: rgba(18, 18, 18, 0.22);
+  --text-highlight-bg: var(--press-ink);
+  --text-highlight-color: var(--press-paper);
+
+  --interactive-normal: var(--press-paper);
+  --interactive-hover: var(--press-paper-secondary);
+  --interactive-accent: var(--press-accent);
+  --interactive-accent-hover: #262626;
+  --interactive-accent-rgb: 0, 0, 0;
+  --interactive-success: var(--press-ink);
+  --interactive-danger: var(--press-ink);
+
+  --accent: var(--press-ink);
+  --accent-hover: #000000;
+  --accent-rgb: 18, 18, 18;
+
+  --titlebar-background: var(--press-paper);
+  --titlebar-background-focused: var(--press-paper);
+  --divider-color: rgba(18, 18, 18, 0.55);
+  --pill-cover-hover: rgba(18, 18, 18, 0.12);
+
+  /* --- Ссылки --- */
+  --link-color: var(--press-ink);
+  --link-color-hover: #000000;
+  --link-decoration: underline dotted;
+  --link-decoration-hover: underline solid;
+  --link-unresolved-color: var(--press-ink-muted);
+  --link-unresolved-decoration-color: var(--press-ink-muted);
+
+  /* --- Теги --- */
+  --tag-background: var(--press-ink);
+  --tag-color: var(--press-paper);
+  --tag-background-hover: #000000;
+  --tag-color-hover: var(--press-paper);
+  --tag-padding-x: 6px;
+  --tag-padding-y: 1px;
+  --tag-radius: 0px;
+
+  /* --- Чекбоксы --- */
+  --checkbox-size: 15px;
+  --checkbox-border-color: var(--press-ink);
+  --checkbox-color: var(--press-ink);
+  --checkbox-color-hover: var(--press-ink);
+  --checkbox-marker-color: var(--press-paper);
+  --checkbox-radius: 0px;
+
+  /* --- Код --- */
+  --code-background: var(--press-paper-secondary);
+  --code-normal: var(--press-ink);
+  --code-comment: var(--press-ink-muted);
+  --code-size: 0.85em;
+  --code-radius: 0px;
+
+  /* --- Заголовки --- */
+  --heading-color: var(--press-ink);
+
+  /* --- Метаданные / properties --- */
+  --metadata-background: var(--press-paper-secondary);
+  --metadata-border-color: var(--press-ink);
+  --metadata-divider-color: var(--press-ink);
+  --metadata-label-text-color: var(--press-ink-muted);
+}
+
+/* =====================================================================
+   3. DARK MODE — инвертированный термочек
+   ===================================================================== */
+body.theme-dark {
+  --press-paper: #0D0D0D;              /* глубокий чёрный фон */
+  --press-paper-secondary: #161616;    /* второй слой чёрного */
+  --press-paper-shade: #1E1E1E;
+  --press-ink: #E5E5E5;                /* белые термоточки */
+  --press-ink-muted: #9E9E9E;
+  --press-ink-faint: #6E6E6E;
+  --press-accent: #FFFFFF;
+
+  --background-primary: var(--press-paper);
+  --background-primary-alt: var(--press-paper-shade);
+  --background-secondary: var(--press-paper-secondary);
+  --background-secondary-alt: var(--press-paper-shade);
+
+  --background-modifier-border: #6E6E6E;
+  --background-modifier-border-hover: #9E9E9E;
+  --background-modifier-border-focus: var(--press-ink);
+  --background-modifier-box-shadow: rgba(0, 0, 0, 0.6);
+  --background-modifier-error: var(--press-ink);
+  --background-modifier-error-hover: #FFFFFF;
+  --background-modifier-success: var(--press-ink);
+  --background-modifier-message: var(--press-paper-secondary);
+  --background-modifier-hover: rgba(229, 229, 229, 0.10);
+  --background-modifier-active-hover: rgba(229, 229, 229, 0.18);
+
+  --text-normal: var(--press-ink);
+  --text-muted: var(--press-ink-muted);
+  --text-faint: var(--press-ink-faint);
+  --text-error: var(--press-ink);
+  --text-success: var(--press-ink);
+  --text-accent: var(--press-ink);
+  --text-accent-hover: #FFFFFF;
+  --text-on-accent: var(--press-paper);
+  --text-selection: rgba(229, 229, 229, 0.25);
+  --text-highlight-bg: var(--press-ink);
+  --text-highlight-color: var(--press-paper);
+
+  --interactive-normal: var(--press-paper-secondary);
+  --interactive-hover: var(--press-paper-shade);
+  --interactive-accent: var(--press-accent);
+  --interactive-accent-hover: #CBCBCB;
+  --interactive-accent-rgb: 229, 229, 229;
+  --interactive-success: var(--press-ink);
+  --interactive-danger: var(--press-ink);
+
+  --accent: var(--press-ink);
+  --accent-hover: #FFFFFF;
+  --accent-rgb: 229, 229, 229;
+
+  --titlebar-background: var(--press-paper);
+  --titlebar-background-focused: var(--press-paper);
+  --divider-color: rgba(229, 229, 229, 0.35);
+  --pill-cover-hover: rgba(229, 229, 229, 0.10);
+
+  --link-color: var(--press-ink);
+  --link-color-hover: #FFFFFF;
+  --link-decoration: underline dotted;
+  --link-decoration-hover: underline solid;
+  --link-unresolved-color: var(--press-ink-muted);
+  --link-unresolved-decoration-color: var(--press-ink-muted);
+
+  --tag-background: var(--press-ink);
+  --tag-color: var(--press-paper);
+  --tag-background-hover: #FFFFFF;
+  --tag-color-hover: var(--press-paper);
+  --tag-padding-x: 6px;
+  --tag-padding-y: 1px;
+  --tag-radius: 0px;
+
+  --checkbox-size: 15px;
+  --checkbox-border-color: var(--press-ink);
+  --checkbox-color: var(--press-ink);
+  --checkbox-color-hover: var(--press-ink);
+  --checkbox-marker-color: var(--press-paper);
+  --checkbox-radius: 0px;
+
+  --code-background: var(--press-paper-secondary);
+  --code-normal: var(--press-ink);
+  --code-comment: var(--press-ink-muted);
+  --code-size: 0.85em;
+  --code-radius: 0px;
+
+  --heading-color: var(--press-ink);
+
+  --metadata-background: var(--press-paper-secondary);
+  --metadata-border-color: #6E6E6E;
+  --metadata-divider-color: #6E6E6E;
+  --metadata-label-text-color: var(--press-ink-muted);
+}
+
+/* =====================================================================
+   4. Базовый интерфейс — чековый моноширинный шрифт
+   Панели, вкладки, кнопки, меню — все служебные элементы печатаются
+   моноширинным шрифтом кассового аппарата.
+   ===================================================================== */
+body {
+  font-family: var(--font-interface);
+  --font-ui-small: 12px;
+  --font-ui-medium: 13px;
+  --font-ui-large: 16px;
+}
+
+/* Заголовки панелей и подписи интерфейса */
+.sidebar,
+.workspace-ribbon,
+.view-header,
+.status-bar,
+.menu,
+.modal,
+.prompt,
+.dropdown,
+.search-input-container,
+.workspace-tab-header,
+.nav-file-title,
+.nav-folder-title,
+.tree-item-self,
+.popover,
+.suggestion-item,
+.metadata-container,
+.outline-item,
+.backlink-pane,
+.graph-controls,
+.vertical-tab-header,
+.horizontal-tab-header,
+.titlebar,
+.workspace-split,
+.workspace-leaf {
+  font-family: var(--font-interface);
+}
+
+/* Рамки интерфейса: чёткие 1px линии, без скруглений */
+.workspace-ribbon,
+.workspace-tab-header-container,
+.view-header,
+.status-bar,
+.sidebar,
+.modal,
+.prompt,
+.menu,
+.popover,
+.canvas-node,
+.workspace-leaf {
+  border-radius: 0px;
+}
+
+/* =====================================================================
+   5. Типографика основного текста — чековая строка
+   Основной текст заметок печатается моноширинным чековым шрифтом.
+   ===================================================================== */
+.markdown-preview-view,
+.markdown-source-view.mod-cm6 .cm-content,
+.markdown-source-view.mod-cm6 .cm-editor,
+.cm-sizer,
+.markdown-rendered {
+  font-family: var(--font-text);
+}
+
+/* Курсив в духе газетного набора */
+em, .cm-em {
+  font-style: italic;
+}
+
+/* =====================================================================
+   6. Заголовки H1–H6 — газетные шапки и рубрики
+   ===================================================================== */
+.markdown-preview-view h1,
+.markdown-source-view.mod-cm6 .cm-line:has(.cm-header-1),
+.markdown-rendered h1 {
+  font-family: var(--font-heading);   /* газетная антиква */
+  font-weight: 900;
+  text-transform: uppercase;          /* ALL CAPS — заголовок первой полосы */
+  text-align: center;                 /* по центру, как шапка газеты */
+  letter-spacing: 0.04em;
+  border-bottom: 2px dashed var(--text-muted);  /* пунктирная линия отреза */
+  padding-bottom: 0.35em;
+  margin-bottom: 0.8em;
+  line-height: 1.2;
+}
+
+.markdown-preview-view h2,
+.markdown-source-view.mod-cm6 .cm-line:has(.cm-header-2),
+.markdown-rendered h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 2px dashed var(--text-muted);  /* пунктирная рубрика */
+  padding-bottom: 0.3em;
+  margin-bottom: 0.6em;
+  line-height: 1.3;
+}
+
+.markdown-preview-view h3,
+.markdown-source-view.mod-cm6 .cm-line:has(.cm-header-3),
+.markdown-rendered h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  border-bottom: 2px dotted var(--text-muted);  /* точечная рубрика */
+  padding-bottom: 0.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.markdown-preview-view h4,
+.markdown-rendered h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 1.05em;
+  letter-spacing: 0.06em;
+}
+
+.markdown-preview-view h5,
+.markdown-rendered h5 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-style: italic;
+}
+
+.markdown-preview-view h6,
+.markdown-rendered h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* =====================================================================
+   7. Линии отреза чека и разделители
+   hr: пунктирная линия отреза термоленты.
+   ===================================================================== */
+hr,
+.markdown-rendered hr,
+.cm-line hr {
+  border: none;
+  border-top: 2px dashed var(--text-muted);  /* пунктирная перфорация */
+  height: 1px;
+  margin: 1.6em 0;
+}
+
+/* =====================================================================
+   8. Чекбоксы — квадратные, «сканированный X» при отметке
+   ===================================================================== */
+input[type="checkbox"] {
+  border-radius: 0px !important;
+}
+
+/* Отмеченный чекбокс: заливка чёрным + жирный X моноширинным шрифтом */
+input[type="checkbox"]:checked {
+  background-color: var(--checkbox-color) !important;
+  background-image: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  box-shadow: inset 0 0 0 1px var(--checkbox-border-color);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "X";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-monospace);
+  font-size: 0.72em;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--checkbox-marker-color);
+}
+
+/* Задачи: стиль галочки при переносе строк */
+.markdown-preview-view ul > li.task-list-item,
+.markdown-rendered li.task-list-item {
+  list-style: none;
+}
+
+.task-list-item.is-checked .task-list-item-checkbox + * {
+  color: var(--text-faint);
+  text-decoration: line-through;
+  text-decoration-style: solid;
+}
+
+/* =====================================================================
+   9. Теги — врезки газетной страницы
+   Тонкая чёрная рамка, едва заметный серый фон, моноширинный
+   шрифт и верхний регистр.
+   ===================================================================== */
+.tag,
+.cm-hashtag {
+  font-family: var(--font-monospace);
+  font-size: 0.78em;
+  font-weight: 700;
+  text-transform: uppercase;         /* ALL CAPS — газетный набор */
+  letter-spacing: 0.06em;
+  border-radius: 0px;
+  padding: var(--tag-padding-y) var(--tag-padding-x);
+  background-color: color-mix(in srgb, var(--text-normal) 7%, transparent);
+  color: var(--text-normal);
+  border: 1px solid var(--text-normal);   /* тонкая чёрная рамка */
+}
+
+.tag:hover,
+.cm-hashtag:hover {
+  background-color: var(--text-normal);
+  color: var(--background-primary);
+}
+
+/* В тексте заметки тег без маркера '#', как печатный [tag] */
+.cm-hashtag.cm-hashtag-begin::before,
+.cm-hashtag.cm-hashtag-end::after {
+  content: none;
+}
+
+/* =====================================================================
+   10. Код — кассовая лента
+   ===================================================================== */
+/* Инлайновый код: печатная строка чека */
+.markdown-rendered code:not(pre code),
+.cm-inline-code {
+  font-family: var(--font-monospace);
+  background-color: var(--code-background);
+  color: var(--code-normal);
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+  padding: 0.08em 0.3em;
+  font-size: var(--code-size);
+}
+
+/* Блоки кода: ленточный отрез с рамкой и «перфорацией» слева */
+.markdown-rendered pre,
+.markdown-preview-view pre,
+.cm-sizer .cm-content pre {
+  font-family: var(--font-monospace);
+  background-color: var(--code-background);
+  border: 1px solid var(--press-ink);
+  border-left: 4px solid var(--press-ink);
+  border-radius: 0px;
+  padding: 0.9em 1em;
+}
+
+.markdown-rendered pre code,
+.markdown-preview-view pre code {
+  font-family: var(--font-monospace);
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--code-size);
+}
+
+/* Метка языка над блоком кода — как служебный штамп чека */
+.markdown-rendered pre .language-label,
+.markdown-preview-view .language-label {
+  font-family: var(--font-interface);
+  font-size: 0.68em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* =====================================================================
+   11. Коллауты — чековые купоны и газетные врезки
+   Штриховая рамка, моноширинный заголовок, монохромные иконки.
+   ===================================================================== */
+.callout,
+.markdown-rendered .callout,
+.markdown-source-view.mod-cm6 .callout {
+  --callout-color: 18, 18, 18;   /* все купоны монохромные */
+  --callout-title-color: var(--text-normal);
+  --callout-title-size: 0.82em;
+  --callout-content-padding: 0.8em 1em;
+  border: 2px dashed var(--press-ink);   /* штриховая рамка купона */
+  border-radius: 0px;
+  background-color: var(--background-primary);
+}
+
+.callout-title {
+  font-family: var(--font-interface);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px dotted var(--press-ink);
+  padding-bottom: 0.4em;
+}
+
+/* Монохромные иконки купонов */
+.callout-icon svg,
+.callout-title .callout-icon {
+  color: var(--text-normal);
+  fill: var(--text-normal);
+  filter: grayscale(1);
+  opacity: 1;
+}
+
+.callout[data-callout="quote"],
+.callout[data-callout="note"],
+.callout[data-callout="info"],
+.callout[data-callout="warning"],
+.callout[data-callout="tip"],
+.callout[data-callout="success"],
+.callout[data-callout="danger"],
+.callout[data-callout="todo"],
+.callout[data-callout="question"],
+.callout[data-callout="example"],
+.callout[data-callout="abstract"] {
+  --callout-color: 18, 18, 18;
+}
+
+/* =====================================================================
+   12. Цитаты — газетные врезки
+   ===================================================================== */
+.markdown-rendered blockquote,
+.markdown-preview-view blockquote {
+  font-family: var(--font-text);
+  font-style: italic;
+  border-left: 4px double var(--press-ink);
+  background-color: var(--background-secondary);
+  border-radius: 0px;
+  padding: 0.5em 1em;
+  margin: 1em 0;
+}
+
+/* =====================================================================
+   13. Ссылки — пунктирное подчёркивание
+   ===================================================================== */
+.markdown-rendered a,
+.markdown-preview-view a,
+.cm-link,
+.cm-hmd-internal-link {
+  font-family: var(--font-text);
+}
+
+.internal-link,
+.external-link,
+.markdown-rendered a.internal-link,
+.markdown-rendered a.external-link {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.internal-link:hover,
+.external-link:hover {
+  text-decoration: underline solid;
+}
+
+/* =====================================================================
+   14. Таблицы — газетные линейки
+   ===================================================================== */
+.markdown-rendered table,
+.markdown-preview-view table {
+  font-family: var(--font-text);
+  border-collapse: collapse;
+  border-top: 2px solid var(--press-ink);
+  border-bottom: 2px solid var(--press-ink);
+  border-radius: 0px;
+}
+
+.markdown-rendered th,
+.markdown-preview-view th {
+  font-family: var(--font-interface);
+  font-size: 0.75em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-normal);
+  border-bottom: 1px solid var(--press-ink);
+  padding: 0.35em 0.8em;
+}
+
+.markdown-rendered td,
+.markdown-preview-view td {
+  border-bottom: 1px dotted var(--press-ink-faint);
+  padding: 0.35em 0.8em;
+}
+
+.markdown-rendered tbody tr:last-child td,
+.markdown-preview-view tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =====================================================================
+   15. Выделения, kbd, метки
+   ===================================================================== */
+/* Маркер — инверсия, как правка редакторским карандашом */
+mark,
+.markdown-rendered mark,
+.cm-highlight {
+  background-color: var(--text-highlight-bg);
+  color: var(--text-highlight-color);
+}
+
+/* Клавиши — печатные кнопки кассы */
+kbd {
+  font-family: var(--font-monospace);
+  border: 1px solid var(--press-ink);
+  border-bottom-width: 3px;
+  border-radius: 0px;
+  background-color: var(--background-secondary);
+  color: var(--text-normal);
+  padding: 0.1em 0.5em;
+}
+
+/* =====================================================================
+   16. Метаданные заметки (properties) — шапка кассового чека
+   Пунктирный контур + двойные линии отреза ленты сверху и снизу,
+   все ключи и значения набраны моноширинным шрифтом чека.
+   ===================================================================== */
+.metadata-container {
+  border: 1px dashed var(--metadata-border-color);    /* пунктирный контур */
+  border-top: 3px double var(--metadata-border-color);    /* отрез ленты сверху */
+  border-bottom: 3px double var(--metadata-border-color); /* отрез ленты снизу */
+  border-radius: 0px;
+  background-color: var(--metadata-background);
+  font-family: var(--font-monospace);
+  font-size: 15px;          /* увеличенный кегль чека (шаг от 0.85em → ~15px) */
+}
+
+/* Все ключи и значения свойств — моноширинный шрифт чека (кегль наследуется) */
+.metadata-container *,
+.metadata-add-button,
+.metadata-property-key,
+.metadata-property-value {
+  font-family: var(--font-monospace);
+}
+
+/* Ссылки внутри свойств — текстовый штамп кассового чека */
+.metadata-container a,
+.metadata-container .metadata-link,
+.metadata-container .metadata-property-value a {
+  font-family: var(--font-monospace);
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text-normal);
+  background-color: var(--background-secondary);
+  border: 1px solid var(--text-muted);
+  border-bottom-width: 2px;          /* штамп с утолщённой нижней чертой */
+  border-radius: 0px;
+  padding: 0 0.35em;
+}
+
+.metadata-container a:hover,
+.metadata-container .metadata-link:hover {
+  background-color: var(--text-normal);
+  color: var(--background-primary);
+  border-color: var(--text-normal);
+}
+
+/* =====================================================================
+   17. Рабочая область, вкладки, панели
+   ===================================================================== */
+/* Панель вкладок: перфорация-линия отреза снизу */
+.workspace-tab-header-container {
+  border-bottom: 1px dashed var(--text-muted);  /* мелкая перфорация */
+  box-shadow: none;
+}
+
+/* Вкладки-«закладки»: активная — чёткая рамка без скруглений */
+.workspace-tab-header {
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 0px;
+  background-color: var(--background-secondary);
+}
+
+.workspace-tab-header.is-active {
+  background-color: var(--background-primary);
+  border: 1px solid var(--press-ink);      /* чёткая чёрная рамка */
+  border-bottom: none;
+  border-radius: 0px;
+  font-weight: 700;
+}
+
+/* Шапка заметки — моноширинный заголовок */
+.view-header {
+  border-bottom: 1px solid var(--press-ink);
+}
+
+.view-header-title {
+  font-family: var(--font-interface);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Лента слева (ribbon) — печатная колонка */
+.workspace-ribbon {
+  border-right: 1px solid var(--press-ink);
+}
+
+.workspace-ribbon .sidebar-action,
+.workspace-ribbon .clickable-icon {
+  color: var(--text-normal);
+  border-radius: 0px;
+}
+
+/* Дерево файлов: активный файл — инвертированная строка */
+.nav-file-title,
+.nav-folder-title,
+.tree-item-self {
+  border-radius: 0px;
+  font-family: var(--font-interface);
+  font-size: 0.9em;
+}
+
+.nav-file-title.is-active,
+.nav-file-title.is-selected,
+.tree-item-self.is-active {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+}
+
+.nav-file-title.is-active .nav-file-title-content,
+.tree-item-self.is-active .tree-item-inner {
+  color: var(--press-paper);
+}
+
+/* Результаты поиска: совпадение — жирный инвертированный фрагмент */
+.search-result-file-matched-text,
+.search-result-file-title.is-selected {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+  border-radius: 0px;
+}
+
+/* Статус-бар — строка кассового отчёта */
+.status-bar {
+  border-top: 1px solid var(--press-ink);
+  border-radius: 0px;
+  font-family: var(--font-interface);
+  font-size: 0.78em;
+  letter-spacing: 0.04em;
+}
+
+.status-bar-item {
+  border-right: 1px dotted var(--press-ink-faint);
+  padding: 0 0.5em;
+}
+
+.status-bar-item:last-child {
+  border-right: none;
+}
+
+/* =====================================================================
+   18. Кнопки, меню, модальные окна, палитра команд
+   ===================================================================== */
+/* Кнопки — штампы кассы */
+button:not(.clickable-icon),
+.modal button,
+.prompt button {
+  font-family: var(--font-interface);
+  font-size: 0.85em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: none;
+}
+
+button:hover:not(.clickable-icon) {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+}
+
+/* Кнопка-акцент — сплошная инверсия */
+button.modal-warning,
+button.modal-danger,
+button.modal-cta,
+button.modal-primary {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+  border: 1px solid var(--press-ink);
+}
+
+/* Меню и всплывающие окна — газетные страницы */
+.menu,
+.popover {
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+  box-shadow: none;
+  background-color: var(--background-primary);
+}
+
+.menu-item {
+  font-family: var(--font-interface);
+  border-radius: 0px;
+}
+
+.menu-item.selected {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+}
+
+/* Модальные окна — печатные бланки */
+.modal {
+  border: 2px solid var(--press-ink);
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.modal-title,
+.vertical-tab-title,
+.horizontal-tab-title {
+  font-family: var(--font-interface);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Палитра команд / быстрый переход */
+.prompt {
+  border: 2px solid var(--press-ink);
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.suggestion-item {
+  border-radius: 0px;
+  font-family: var(--font-interface);
+}
+
+.suggestion-item.is-selected,
+.suggestion-item.is-active {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+}
+
+.suggestion-item.is-selected .suggestion-title,
+.suggestion-item.is-active .suggestion-title {
+  color: var(--press-paper);
+}
+
+.suggestion-item.is-selected .suggestion-note,
+.suggestion-item.is-active .suggestion-note {
+  color: var(--press-paper);
+  opacity: 0.85;
+}
+
+.suggestion-title {
+  font-family: var(--font-interface);
+  font-weight: 700;
+}
+
+/* Выпадающие списки */
+.dropdown {
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+  font-family: var(--font-interface);
+  background-color: var(--background-primary);
+}
+
+/* Тумблеры настроек — квадратные чековые клавиши */
+.checkbox-container {
+  border-radius: 0px;
+  background-color: var(--background-secondary);
+}
+
+.checkbox-container.is-enabled {
+  background-color: var(--press-ink);
+}
+
+/* Вкладки настроек */
+.vertical-tab-header,
+.horizontal-tab-header {
+  font-family: var(--font-interface);
+}
+
+.vertical-tab-nav-item.is-active {
+  background-color: var(--press-ink);
+  color: var(--press-paper);
+  border-radius: 0px;
+}
+
+/* =====================================================================
+   19. Граф — монохромный дизеринг
+   ===================================================================== */
+.graph-view.color-fill {
+  color: var(--press-ink);
+}
+
+.graph-view.color-fill-tag,
+.graph-view.color-fill-attachment {
+  color: var(--press-ink-faint);
+}
+
+.graph-view.color-arrow {
+  color: var(--press-ink);
+}
+
+.graph-view.color-circle {
+  color: var(--press-ink);
+}
+
+.graph-view.color-line {
+  color: var(--press-ink-faint);
+  opacity: 0.6;
+}
+
+.graph-view.color-text {
+  color: var(--graph-text, var(--text-normal));
+  fill: var(--graph-text, var(--text-normal));
+  font-family: var(--font-interface);
+  font-weight: 700;
+  /* светлый halo-ореол: подписи читаются поверх линий и узлов */
+  text-shadow:
+    0 0 2px var(--background-primary),
+    0 0 4px var(--background-primary),
+    0 0 8px var(--background-primary);
+  paint-order: stroke;
+}
+
+/* Текст узлов графа: глубокий чёрный в светлом режиме,
+   светло-серый в тёмном — с высоким контрастом */
+body.theme-light .graph-view-wrapper {
+  --graph-text: #000000;
+}
+
+body.theme-dark .graph-view-wrapper {
+  --graph-text: #E5E5E5;
+}
+
+.graph-controls {
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+  background-color: var(--background-primary);
+}
+
+/* =====================================================================
+   20. Canvas — газетные вырезки
+   ===================================================================== */
+.canvas-node {
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+  box-shadow: none;
+  background-color: var(--background-primary);
+}
+
+.canvas-node.is-selected,
+.canvas-node.is-focused {
+  box-shadow: none;
+  border: 2px solid var(--press-ink);
+}
+
+.canvas-node-title {
+  font-family: var(--font-interface);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px dashed var(--press-ink);
+}
+
+.canvas-node-group,
+.canvas-node-group.is-selected {
+  background-color: var(--background-secondary);
+  border: 2px dashed var(--press-ink);
+  border-radius: 0px;
+}
+
+/* =====================================================================
+   21. Изображения — эффект газетной фотографии (1-Bit Newspaper)
+   Все картинки автоматически становятся монохромными с высоким
+   контрастом; при наведении возвращаются оригинальные цвета.
+   ===================================================================== */
+.markdown-rendered img,
+.markdown-preview-view img {
+  border: 1px solid var(--press-ink);
+  border-radius: 0px;
+}
+
+/* Полутоновый растр газетной печати */
+.markdown-rendered img:not([class*="emoji"]),
+.markdown-preview-view img:not([class*="emoji"]) {
+  filter: grayscale(100%) contrast(130%);
+  transition: filter 0.2s ease;
+}
+
+/* Наведение — возврат к оригинальным цветам */
+.markdown-rendered img:not([class*="emoji"]):hover,
+.markdown-preview-view img:not([class*="emoji"]):hover {
+  filter: none;
+}
+
+/* =====================================================================
+   22. Скроллбары — тонкие монохромные
+   ===================================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-primary);
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--press-ink);
+  border-radius: 0px;
+  border: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--background-primary);
+}
+
+/* =====================================================================
+   23. Разные мелочи кассы
+   ===================================================================== */
+/* Строка-каракуля при пустой заметке */
+.empty-state-title {
+  font-family: var(--font-text);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.empty-state-action-list {
+  font-family: var(--font-interface);
+}
+
+/* Подсветка активной строки в Live Preview */
+.cm-active.cm-line {
+  background-color: var(--background-secondary);
+}
+
+/* Разделители между панелями */
+.workspace-split.mod-horizontal > .workspace-split,
+.workspace-split.mod-vertical > .workspace-split {
+  border-radius: 0px;
+}
+
+/* Скрытие громоздких рамок скруглённых панелей Obsidian по умолчанию */
+.workspace-tabs,
+.workspace-tab-header-container,
+.workspace-tab-header-container-inner {
+  border-radius: 0px;
+}
+
+/* Всплывающая подсказка — бумажная бирка */
+.popover.hover-popover {
+  border: 2px solid var(--press-ink);
+  border-radius: 0px;
+  box-shadow: none;
+  background-color: var(--background-primary);
+}
+
+/* Тултипы — контрастный тёмный штамп: глубокий чёрный фон,
+   чисто белый текст и чёрная рамка (читаемо на любом фоне) */
+.tooltip,
+.tooltip .tooltip-content,
+.tooltip .tooltip-text,
+.tooltip-content {
+  background-color: #121212 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #000;
+  border-radius: 0px;
+  font-family: var(--font-monospace);
+  font-size: 0.82em;
+}
+
+.tooltip {
+  box-shadow: none;
+  padding: 0.4em 0.7em;
+}
+
+/* В тёмном режиме рамку делаем светлее, чтобы она была видна */
+body.theme-dark .tooltip {
+  border-color: #6E6E6E;
+}
+
+/* Скрытый атрибут H1 для заголовка перед текстом */
+.markdown-rendered h1 + hr {
+  margin-top: 0.2em;
+}
+
+/* =====================================================================
+   24. Таймкоды и метки времени — штамп времени кассового чека
+   Жирный моноширинный текст с акцентом. Оборачивайте время
+   в HTML-тег <time>11:02</time> (Dataview рендерит даты и время
+   в <time> автоматически).
+   ===================================================================== */
+.markdown-rendered time,
+.markdown-preview-view time,
+.markdown-source-view.mod-cm6 time,
+.metadata-container time {
+  font-family: var(--font-monospace);
+  font-weight: 700;
+  font-size: 0.95em;
+  letter-spacing: 0.05em;
+  color: var(--text-accent);
+  border-bottom: 1px dotted var(--text-muted);
+}
+
+/* =====================================================================
+   Конец Daily Press.
+   ===================================================================== */
