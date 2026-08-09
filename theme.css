@@ -432,8 +432,14 @@ input[type="checkbox"]:checked::after {
    Тонкая чёрная рамка, едва заметный серый фон, моноширинный
    шрифт и верхний регистр.
    ===================================================================== */
-.tag,
-.cm-hashtag {
+/* Селекторы тегов ограничены областью просмотра заметок и metadata:
+   служебные теги интерфейса (каталог тем, бейджи, сайдбары) сохраняют
+   дефолтный стиль Obsidian. */
+.markdown-rendered .tag,
+.markdown-preview-view .tag,
+.markdown-source-view.mod-cm6 .cm-hashtag,
+.metadata-container .tag,
+.metadata-container .cm-hashtag {
   font-family: var(--font-monospace);
   font-size: 0.78em;
   font-weight: 700;
@@ -446,8 +452,11 @@ input[type="checkbox"]:checked::after {
   border: 1px solid var(--text-normal);   /* тонкая чёрная рамка */
 }
 
-.tag:hover,
-.cm-hashtag:hover {
+.markdown-rendered .tag:hover,
+.markdown-preview-view .tag:hover,
+.markdown-source-view.mod-cm6 .cm-hashtag:hover,
+.metadata-container .tag:hover,
+.metadata-container .cm-hashtag:hover {
   background-color: var(--text-normal);
   color: var(--background-primary);
 }
@@ -628,10 +637,11 @@ input[type="checkbox"]:checked::after {
 /* =====================================================================
    15. Выделения, kbd, метки
    ===================================================================== */
-/* Маркер — инверсия, как правка редакторским карандашом */
-mark,
+/* Маркер — инверсия, как правка редакторским карандашом.
+   Только внутри заметок: голый `mark` в служебном интерфейсе
+   (каталог тем, плагины) сохраняет дефолтный вид Obsidian. */
 .markdown-rendered mark,
-.cm-highlight {
+.markdown-source-view.mod-cm6 .cm-highlight {
   background-color: var(--text-highlight-bg);
   color: var(--text-highlight-color);
 }
@@ -789,10 +799,12 @@ kbd {
 /* =====================================================================
    18. Кнопки, меню, модальные окна, палитра команд
    ===================================================================== */
-/* Кнопки — штампы кассы */
-button:not(.clickable-icon),
-.modal button,
-.prompt button {
+/* Кнопки — штампы кассы. Ограничены областью просмотра заметок,
+   чтобы служебный интерфейс (настройки, каталог тем, модалки)
+   сохранял дефолтные кнопки Obsidian. */
+.markdown-rendered button:not(.clickable-icon),
+.markdown-rendered .modal button,
+.markdown-rendered .prompt button {
   font-family: var(--font-interface);
   font-size: 0.85em;
   font-weight: 700;
@@ -805,16 +817,16 @@ button:not(.clickable-icon),
   box-shadow: none;
 }
 
-button:hover:not(.clickable-icon) {
+.markdown-rendered button:hover:not(.clickable-icon) {
   background-color: var(--press-ink);
   color: var(--press-paper);
 }
 
-/* Кнопка-акцент — сплошная инверсия */
-button.modal-warning,
-button.modal-danger,
-button.modal-cta,
-button.modal-primary {
+/* Кнопка-акцент — сплошная инверсия (только в заметках) */
+.markdown-rendered button.modal-warning,
+.markdown-rendered button.modal-danger,
+.markdown-rendered button.modal-cta,
+.markdown-rendered button.modal-primary {
   background-color: var(--press-ink);
   color: var(--press-paper);
   border: 1px solid var(--press-ink);
@@ -1141,6 +1153,144 @@ body.theme-dark .tooltip {
   letter-spacing: 0.05em;
   color: var(--text-accent);
   border-bottom: 1px dotted var(--text-muted);
+}
+
+/* =====================================================================
+   25. Каталог тем (Community Themes) — восстановление контрастности
+   Служебные карточки каталога возвращаются к чистому контрастному виду:
+   тёмный текст на светлом фоне, иконки видны. `!important` на цвет
+   намеренно НЕ ставится, чтобы не перебивать подсветку совпадений.
+   ===================================================================== */
+.community-theme-item,
+.community-theme-item .theme-title,
+.community-theme-item .theme-author,
+.community-theme-item .theme-badges {
+  color: var(--text-normal);
+}
+
+.community-theme-item .theme-title-icon {
+  display: block !important; /* Гарантируем, что иконки не скрыты */
+}
+
+/* =====================================================================
+   ФИКС ПОИСКА В КАТАЛОГЕ ТЕМ (COMMUNITY THEMES)
+   ===================================================================== */
+
+/* 1. Полный сброс для всех типов подсветок в модальных окнах и карточках тем */
+.modal .search-highlight,
+.modal .suggestion-highlight,
+.modal .search-result-file-matched-text,
+.modal mark,
+.community-theme-item .search-highlight,
+.community-theme-item .suggestion-highlight,
+.community-theme-item mark {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+  color: var(--text-normal) !important;
+  padding: 0 2px !important;
+  margin: 0 !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+/* 2. Для светлой темы — серый акцент для букв и чёткий тёмный текст */
+body.theme-light .modal .search-highlight,
+body.theme-light .modal .suggestion-highlight,
+body.theme-light .modal mark,
+body.theme-light .community-theme-item .search-highlight,
+body.theme-light .community-theme-item .suggestion-highlight,
+body.theme-light .community-theme-item mark {
+  background-color: #dcdad3 !important;
+  color: #121212 !important;
+}
+
+/* 3. Для тёмной темы — мягкий тёмно-серый акцент и светлый текст */
+body.theme-dark .modal .search-highlight,
+body.theme-dark .modal .suggestion-highlight,
+body.theme-dark .modal mark,
+body.theme-dark .community-theme-item .search-highlight,
+body.theme-dark .community-theme-item .suggestion-highlight,
+body.theme-dark .community-theme-item mark {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+/* =====================================================================
+   ФИКС КНОПОК УПРАВЛЕНИЯ ОКНОМ (TITLEBAR BUTTONS)
+   ===================================================================== */
+
+/* 1. Базовые кнопки свернуть / развернуть / закрыть */
+.titlebar-button {
+  border-radius: 0 !important;
+  transition: background-color 0.1s ease, color 0.1s ease !important;
+}
+
+/* Наведение на стандартные кнопки (свернуть/развернуть) */
+.titlebar-button:hover {
+  background-color: var(--background-modifier-hover) !important;
+}
+
+/* Иконки стандартных кнопок (НЕ закрытия — для неё отдельный блок ниже) */
+body.theme-light .titlebar-button:hover:not(.mod-close) svg {
+  color: #121212 !important;
+  stroke: #121212 !important;
+}
+
+body.theme-dark .titlebar-button:hover:not(.mod-close) svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* 2. Кнопка «Закрыть» (.titlebar-close): тёмно-серый акцент при hover */
+.titlebar-button.mod-close:hover,
+.titlebar-close:hover {
+  background-color: #444444 !important; /* тёмно-серый акцент */
+  color: #ffffff !important;
+}
+
+/* Крестик (иконка SVG) при наведении становится белым в обоих режимах */
+.titlebar-button.mod-close:hover svg,
+.titlebar-close:hover svg,
+.titlebar-button.mod-close:hover .titlebar-button-icon,
+.titlebar-close:hover .titlebar-button-icon {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* =====================================================================
+   ФИКС АКТИВНОГО ПУНКТА В БОКОВОМ МЕНЮ НАСТРОЕК
+   ===================================================================== */
+
+/* Стили для активной вкладки в вертикальном меню настроек */
+.vertical-tab-nav-item.is-active {
+  border-radius: 0px !important;
+  font-weight: 700 !important;
+}
+
+/* Светлая тема: чёрный фон, чисто белый текст и белые иконки */
+body.theme-light .vertical-tab-nav-item.is-active {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+body.theme-light .vertical-tab-nav-item.is-active .vertical-tab-nav-item-chevron,
+body.theme-light .vertical-tab-nav-item.is-active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Тёмная тема: белый (или очень светлый) фон, чёткий чёрный текст и иконки */
+body.theme-dark .vertical-tab-nav-item.is-active {
+  background-color: #e5e5e5 !important;
+  color: #0d0d0d !important;
+}
+
+body.theme-dark .vertical-tab-nav-item.is-active .vertical-tab-nav-item-chevron,
+body.theme-dark .vertical-tab-nav-item.is-active svg {
+  color: #0d0d0d !important;
+  stroke: #0d0d0d !important;
 }
 
 /* =====================================================================
