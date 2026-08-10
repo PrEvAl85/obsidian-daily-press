@@ -64,6 +64,10 @@ This theme is free and ad-free, built in spare time. If you find it useful, you 
 - BTC: `17hDrZL62DBpTjK6xNCGFFG682jN9PiVF1`
 - TON: `UQCzoPJlYLHSoFGmRyh_-_ox1nOMCzx3LwG79xPR5pbjs3Aq`
 
+## Contacts
+
+- **Telegram:** [GraphiCoreOne](https://t.me/GraphiCoreOne) — questions, feedback and ideas.
+
 ## License
 
 MIT
